@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Appointments - CareConnect</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="logo">CareConnect</div>
+
+        <div class="nav-links">
+            <a href="dashboard.html">Home</a>
+            <a href="index.html">Doctors</a>
+            <a href="index.html">Services</a>
+            <a href="login.html">Logout</a>
+        </div>
+    </nav>
+
+
+    <!-- MY APPOINTMENTS -->
+    <section class="appointments-page">
+
+        <h1>My Appointments</h1>
+
+        <p class="appointments-subtitle">
+            View your booked healthcare appointments
+        </p>
+
+        <div id="appointmentsContainer">
+            <p>Loading appointments...</p>
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 CareConnect | Helping Communities Access Online Healthcare Services</p>
+    </footer>
+
+
+    <script>
+        async function loadAppointments() {
+
+            try {
+
+                const response = await fetch("/api/my-appointments");
+
+                const result = await response.json();
+
+                const container =
+                    document.getElementById("appointmentsContainer");
+
+                if (!result.success || result.appointments.length === 0) {
+
+                    container.innerHTML = `
+                        <div class="no-appointments">
+                            <h2>No Appointments Found</h2>
+                            <p>You have not booked any appointment yet.</p>
+
+                            <a href="index.html" class="appointment-btn">
+                                Book Appointment
+                            </a>
+                        </div>
+                    `;
+
+                    return;
+                }
+
+
+                container.innerHTML = "";
+
+                result.appointments.forEach(function(appointment) {
+
+                    const card = document.createElement("div");
+
+                    card.className = "appointment-card";
+
+                    card.innerHTML = `
+                        <h2>Appointment</h2>
+
+                        <p>
+                            <strong>Patient Name:</strong>
+                            ${appointment.patient_name}
+                        </p>
+
+                        <p>
+                            <strong>Age:</strong>
+                            ${appointment.patient_age}
+                        </p>
+
+                        <p>
+                            <strong>Doctor:</strong>
+                            ${appointment.doctor}
+                        </p>
+
+                        <p>
+                            <strong>Date:</strong>
+                            ${appointment.appointment_date}
+                        </p>
+
+                        <p>
+                            <strong>Time:</strong>
+                            ${appointment.appointment_time}
+                        </p>
+
+                        <p>
+                            <strong>Health Problem:</strong>
+                            ${appointment.health_problem}
+                        </p>
+
+                        <button
+    class="cancel-btn"
+    onclick="cancelAppointment(${appointment.id})">
+    ❌ Cancel Appointment
+</button>
+
+                    `;
+
+                    container.appendChild(card);
+
+                });
+
+            } catch (error) {
+
+                console.error(error);
+
+                document.getElementById("appointmentsContainer").innerHTML = `
+                    <p>Unable to load appointments.</p>
+                `;
+
+            }
+        }
+
+
+        loadAppointments();
+   async function cancelAppointment(id) {
+
+
+
+    const confirmCancel = confirm(
+        "Are you sure you want to cancel this appointment?"
+    );
+
+    if (!confirmCancel) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch("/api/appointments/" + id, {
+            method: "DELETE"
+        });
+
+        const result = await response.json();
+
+        alert(result.message);
+
+        if (result.success) {
+            loadAppointments();
+        }
+
+    } catch (error) {
+
+        console.error(error);
+        alert("Unable to cancel appointment.");
+
+    }
+}
+   </script>
+<script src="script.js"></script>
+</body>
+</html>

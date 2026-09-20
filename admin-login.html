@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Login - CareConnect</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <section class="login-page">
+
+        <div class="login-box">
+
+            <h1>CareConnect</h1>
+
+            <h2>Admin Login</h2>
+
+            <p>Login to access Admin Dashboard</p>
+
+            <form id="adminLoginForm">
+
+                <input
+                    type="email"
+                    name="email"
+                    id="adminEmail"
+                    placeholder="Admin Email"
+                    required
+                >
+
+                <input
+                    type="password"
+                    name="password"
+                    id="adminPassword"
+                    placeholder="Admin Password"
+                    required
+                >
+
+                <button type="submit">
+                    Admin Login
+                </button>
+
+            </form>
+
+            <a href="index.html">
+                Back to Website
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <script>
+
+        document
+            .getElementById("adminLoginForm")
+            .addEventListener("submit", function(e) {
+
+                e.preventDefault();
+
+                const email =
+                    document.getElementById("adminEmail").value;
+
+                const password =
+                    document.getElementById("adminPassword").value;
+
+
+                // DEMO ADMIN LOGIN
+
+                if (
+                    email === "admin@careconnect.com" &&
+                    password === "admin123"
+                ) {
+
+                    localStorage.setItem("adminLoggedIn", "true");
+
+                    window.location.href = "admin.html";
+
+                } else {
+
+                    alert("Invalid Admin Email or Password");
+
+                }
+
+            });
+
+    </script>
+<script src="script.js"></script>
+</body>
+
+</html>

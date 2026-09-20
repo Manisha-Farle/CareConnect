@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>CareConnect - Dashboard</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+
+    <!-- =========================
+         NAVBAR
+    ========================== -->
+
+    <header>
+
+        <nav class="navbar">
+
+            <div class="logo">
+                CareConnect
+            </div>
+
+            <ul class="nav-links">
+
+                <li>
+                    <a href="index.html">
+                        Home
+                    </a>
+                </li>
+
+                <li>
+                    <a href="index.html#doctors">
+                        Doctors
+                    </a>
+                </li>
+
+                <li>
+                    <a href="index.html#services">
+                        Services
+                    </a>
+                </li>
+
+            </ul>
+
+            <button class="login-btn"
+                    onclick="logout()">
+
+                Logout
+
+            </button>
+
+        </nav>
+
+    </header>
+
+
+
+    <!-- =========================
+         DASHBOARD
+    ========================== -->
+
+    <section class="dashboard">
+
+        <h1>
+            Welcome to CareConnect
+        </h1>
+
+        <p class="dashboard-text">
+            Helping Communities Access Online Healthcare Services
+        </p>
+
+
+        <div class="dashboard-container">
+
+
+            <!-- =========================
+                 FIND HEALTHCARE
+            ========================== -->
+
+            <div class="dashboard-card">
+
+    <div class="dashboard-icon">
+        🩺
+    </div>
+
+    <h2>
+        Find Healthcare
+    </h2>
+
+    <p>
+        Find nearby hospitals and healthcare services
+        according to your location.
+    </p>
+
+    <button type="button"
+            class="dashboard-btn"
+            onclick="findHealthcare()">
+        📍 Search Healthcare
+    </button>
+
+</div>
+
+
+            <!-- =========================
+                 OUR DOCTORS
+            ========================== -->
+
+            <div class="dashboard-card">
+
+                <div class="dashboard-icon">
+                    👨‍⚕️
+                </div>
+
+                <h2>
+                    Our Doctors
+                </h2>
+
+                <p>
+                    View available doctors and
+                    their specializations.
+                </p>
+
+                <a href="index.html#doctors"
+                   class="dashboard-btn">
+
+                    View Doctors
+
+                </a>
+
+            </div>
+
+
+
+            <!-- =========================
+                 BOOK APPOINTMENT
+            ========================== -->
+
+            <div class="dashboard-card">
+
+                <div class="dashboard-icon">
+                    📅
+                </div>
+
+                <h2>
+                    Book Appointment
+                </h2>
+
+                <p>
+                    Book an appointment with a
+                    healthcare professional.
+                </p>
+
+                <a href="index.html#appointment"
+                   class="dashboard-btn">
+
+                    Book Now
+
+                </a>
+
+            </div>
+
+
+
+            <!-- =========================
+                 MY APPOINTMENTS
+            ========================== -->
+
+            <div class="dashboard-card">
+
+                <div class="dashboard-icon">
+                    📋
+                </div>
+
+                <h2>
+                    My Appointments
+                </h2>
+
+                <p>
+                    View your booked healthcare
+                    appointments.
+                </p>
+
+                <a href="my-appointments.html"
+                   class="dashboard-btn">
+
+                    View Appointments
+
+                </a>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        <h2>
+            CareConnect
+        </h2>
+
+        <p>
+            Helping Communities Access Online Healthcare Services
+        </p>
+
+        <p>
+            © 2026 CareConnect. All Rights Reserved.
+        </p>
+
+    </footer>
+
+
+
+    <!-- =========================
+         LOCATION JAVASCRIPT
+    ========================== -->
+
+    <script>
+function findHealthcare() {
+
+    if (!navigator.geolocation) {
+        alert("Location is not supported by this browser.");
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+
+        function(position) {
+
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            const mapURL =
+                "https://www.google.com/maps/search/hospitals/@"
+                + latitude + ","
+                + longitude + ",14z";
+
+            window.location.href = mapURL;
+        },
+
+        function(error) {
+
+            if (error.code === 1) {
+                alert("Please allow location permission.");
+            } else {
+                alert("Unable to get your location.");
+            }
+
+        },
+
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+    );
+}
+</script>
+
+        // =========================
+        // LOGOUT
+        // =========================
+
+        function logout() {
+
+            localStorage.removeItem("loggedIn");
+
+            alert(
+                "You have been logged out."
+            );
+
+            window.location.href =
+                "login.html";
+
+        }
+
+    </script>
+
+<script>
+
+function findHealthcare() {
+
+    if (!navigator.geolocation) {
+        alert("Location is not supported by this browser.");
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+
+        function(position) {
+
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            const mapURL =
+                "https://www.google.com/maps/search/hospitals/@"
+                + latitude + ","
+                + longitude + ",14z";
+
+            window.location.href = mapURL;
+        },
+
+        function(error) {
+
+            alert("Please allow location permission.");
+
+        },
+
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+
+    );
+}
+
+
+function logout() {
+
+    localStorage.removeItem("loggedIn");
+
+    alert("You have been logged out.");
+
+    window.location.href = "login.html";
+
+}
+
+</script>
+
+    <!-- MAIN SCRIPT -->
+
+    <script src="script.js"></script>
+
+
+</body>
+
+</html>
