@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard - CareConnect</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+
+        <div class="logo">
+            CareConnect Admin
+        </div>
+
+        <div class="nav-links">
+            <a href="dashboard.html">User Dashboard</a>
+            <a href="index.html">Website</a>
+            <a href="#" onclick="adminLogout()">Logout</a>
+        </div>
+
+    </nav>
+
+
+    <!-- ADMIN DASHBOARD -->
+
+    <section class="admin-dashboard">
+
+        <h1>Admin Dashboard</h1>
+
+        <p class="admin-subtitle">
+            Manage CareConnect Healthcare Services
+        </p>
+
+
+        <!-- STATISTICS -->
+
+        <div class="admin-stats">
+
+            <div class="admin-stat-card">
+
+                <h2 id="totalUsers">0</h2>
+
+                <p>Registered Users</p>
+
+            </div>
+
+
+            <div class="admin-stat-card">
+
+                <h2 id="totalAppointments">0</h2>
+
+                <p>Total Appointments</p>
+
+            </div>
+
+
+            <div class="admin-stat-card">
+
+                <h2 id="totalDoctors">3</h2>
+
+                <p>Doctors</p>
+
+            </div>
+
+        </div>
+
+
+        <!-- APPOINTMENTS -->
+
+        <div class="admin-section">
+
+            <h2>All Appointments</h2>
+
+            <div id="adminAppointments">
+
+                <p>Loading appointments...</p>
+
+            </div>
+
+        </div>
+
+
+        <!-- USERS -->
+
+        <div class="admin-section">
+
+            <h2>Registered Users</h2>
+
+            <div id="adminUsers">
+
+                <p>Loading users...</p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        <p>
+            © 2026 CareConnect |
+            Helping Communities Access Online Healthcare Services
+        </p>
+
+    </footer>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script>
+
+        // =========================
+        // DELETE APPOINTMENT
+        // =========================
+
+        async function deleteAppointment(id) {
+
+            const confirmDelete =
+                confirm("Are you sure you want to delete this appointment?");
+
+            if (!confirmDelete) {
+                return;
+            }
+
+            try {
+
+                const response = await fetch(
+                    `/api/admin/appointments/${id}`,
+                    {
+                        method: "DELETE"
+                    }
+                );
+
+                const result = await response.json();
+
+                alert(result.message);
+
+                if (result.success) {
+                    loadAdminData();
+                }
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert("Unable to delete appointment.");
+
+            }
+        }
+
+
+        // =========================
+        // LOAD ADMIN DATA
+        // =========================
+
+        async function loadAdminData() {
+
+            try {
+
+                // =========================
+                // LOAD USERS
+                // =========================
+
+                const usersResponse =
+                    await fetch("/api/admin/users");
+
+                const usersResult =
+                    await usersResponse.json();
+
+
+                if (usersResult.success) {
+
+                    document.getElementById("totalUsers").innerText =
+                        usersResult.users.length;
+
+                    const usersContainer =
+                        document.getElementById("adminUsers");
+
+                    usersContainer.innerHTML = "";
+
+
+                    usersResult.users.forEach(function(user) {
+
+                        usersContainer.innerHTML += `
+
+                            <div class="admin-card">
+
+                                <h3>
+                                    ${user.name}
+                                </h3>
+
+                                <p>
+                                    Email: ${user.email}
+                                </p>
+
+                                <p>
+                                    Phone: ${user.phone}
+                                </p>
+
+                            </div>
+
+                        `;
+
+                    });
+
+                }
+
+
+                // =========================
+                // LOAD APPOINTMENTS
+                // =========================
+
+                const appointmentResponse =
+                    await fetch("/api/my-appointments");
+
+                const appointmentResult =
+                    await appointmentResponse.json();
+
+
+                if (appointmentResult.success) {
+
+                    document.getElementById("totalAppointments").innerText =
+                        appointmentResult.appointments.length;
+
+
+                    const appointmentContainer =
+                        document.getElementById("adminAppointments");
+
+                    appointmentContainer.innerHTML = "";
+
+
+                    appointmentResult.appointments.forEach(function(appointment) {
+
+                        appointmentContainer.innerHTML += `
+
+                            <div class="admin-card">
+
+                                <h3>
+                                    ${appointment.patient_name}
+                                </h3>
+
+                                <p>
+                                    Doctor: ${appointment.doctor}
+                                </p>
+
+                                <p>
+                                    Date: ${appointment.appointment_date}
+                                </p>
+
+                                <p>
+                                    Time: ${appointment.appointment_time}
+                                </p>
+
+                                <p>
+                                    Health Problem:
+                                    ${appointment.health_problem}
+                                </p>
+
+                                <button
+                                    onclick="deleteAppointment(${appointment.id})"
+                                    class="delete-btn">
+                                    Delete Appointment
+                                </button>
+
+                            </div>
+
+                        `;
+
+                    });
+
+                }
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+            }
+
+        }
+
+
+        // Load data when page opens
+        loadAdminData();
+
+
+        // =========================
+        // ADMIN LOGOUT
+        // =========================
+
+        function adminLogout() {
+
+            localStorage.removeItem("adminLoggedIn");
+
+            window.location.href = "admin-login.html";
+
+        }
+
+
+        // =========================
+        // ADMIN SECURITY
+        // =========================
+
+        if (localStorage.getItem("adminLoggedIn") !== "true") {
+
+            window.location.href = "admin-login.html";
+
+        }
+
+    </script>
+<script src="script.js"></script>
+
+</body>
+
+</html>
