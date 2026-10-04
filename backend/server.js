@@ -47,7 +47,7 @@ app.get("/admin.html", (req, res) => {
 // =========================
 // MYSQL CONNECTION
 // =========================
-
+console.log("DB_HOST:", process.env.DB_HOST);
 const db = mysql.createConnection({
     host: process.env.DB_HOST || "localhost",
     user: process.env.DB_USER || "root",
@@ -64,7 +64,6 @@ db.connect((err) => {
 
     console.log("MySQL connected successfully!");
 });
-
 // =========================
 // TEST API
 // =========================
