@@ -3222,3 +3222,57 @@ nav a{
 .appointments-page {
     padding-top: 130px !important;
 }
+/* =========================
+   FINAL MOBILE FIX
+========================= */
+
+@media (max-width: 600px) {
+
+    /* Mobile Navbar */
+    .navbar {
+        flex-wrap: wrap;
+        padding: 12px 10px;
+    }
+
+    .nav-links {
+        display: flex !important;
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .nav-links a {
+        font-size: 12px;
+        padding: 5px;
+    }
+
+    /* Doctors - one card per row */
+    .doctor-container {
+        grid-template-columns: 1fr !important;
+        width: 100%;
+        padding: 0 15px;
+        gap: 20px;
+    }
+
+    .doctor-card {
+        width: 100% !important;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .doctor-card h3 {
+        font-size: 22px;
+    }
+}
+@media (max-width: 600px) {
+    .doctor-container {
+        grid-template-columns: 1fr !important;
+    }
+
+    .doctor-card {
+        width: 100% !important;
+        min-width: 0;
+    }
+}
