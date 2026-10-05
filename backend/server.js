@@ -63,6 +63,53 @@ db.connect((err) => {
     }
 
     console.log("MySQL connected successfully!");
+
+    const createUsersTable = `
+        CREATE TABLE IF NOT EXISTS users (
+            id INT NOT NULL AUTO_INCREMENT,
+            name VARCHAR(100) NOT NULL,
+            email VARCHAR(100) NOT NULL UNIQUE,
+            phone VARCHAR(15),
+            password VARCHAR(255) NOT NULL,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id)
+        )
+    `;
+
+    const createAppointmentsTable = `
+        CREATE TABLE IF NOT EXISTS appointments (
+            id INT NOT NULL AUTO_INCREMENT,
+            patient_name VARCHAR(100) NOT NULL,
+            patient_age INT,
+            phone VARCHAR(15),
+            email VARCHAR(100),
+            doctor VARCHAR(100),
+            appointment_date DATE,
+            appointment_time TIME,
+            health_problem TEXT,
+            status VARCHAR(30) DEFAULT 'Pending',
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id)
+        )
+    `;
+
+    db.query(createUsersTable, (err) => {
+        if (err) {
+            console.log("Users table creation failed:", err);
+            return;
+        }
+
+        console.log("Users table ready!");
+
+        db.query(createAppointmentsTable, (err) => {
+            if (err) {
+                console.log("Appointments table creation failed:", err);
+                return;
+            }
+
+            console.log("Appointments table ready!");
+        });
+    });
 });
 // =========================
 // TEST API
