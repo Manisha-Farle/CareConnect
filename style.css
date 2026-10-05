@@ -585,6 +585,7 @@ footer p {
 ========================= */
 
 .appointment {
+    padding-top: 80px;
     background: white;
 }
 
@@ -3216,4 +3217,8 @@ nav a{
     color: #087ea4;
     
     transition: 0.3s ease;
+}
+/* FIX MY APPOINTMENTS HEADING */
+.appointments-page {
+    padding-top: 130px !important;
 }
