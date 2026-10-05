@@ -3631,3 +3631,83 @@ nav a{
         top: 100% !important;
     }
 }
+/* ===== MOBILE DOCTORS SECTION ===== */
+
+@media (max-width: 600px) {
+
+    .doctors {
+        padding: 45px 15px 50px !important;
+        width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .doctors h2 {
+        font-size: 28px !important;
+        margin-bottom: 8px !important;
+        text-align: center;
+    }
+
+    .doctors .section-text {
+        font-size: 14px !important;
+        line-height: 1.5 !important;
+        text-align: center;
+        margin-bottom: 25px !important;
+    }
+
+    .doctor-container {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 18px !important;
+        width: 100% !important;
+        max-width: 380px !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .doctor-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        padding: 20px 15px !important;
+        text-align: center !important;
+        overflow: hidden !important;
+        border-radius: 18px !important;
+    }
+
+    .doctor-photo {
+        width: 125px !important;
+        height: 125px !important;
+        margin: 0 auto 14px !important;
+        border-radius: 50% !important;
+        overflow: hidden !important;
+        flex-shrink: 0 !important;
+    }
+
+    .doctor-photo img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        object-position: center !important;
+        display: block !important;
+    }
+
+    .doctor-card h3 {
+        font-size: 18px !important;
+        margin: 8px 0 5px !important;
+    }
+
+    .doctor-card p {
+        font-size: 13px !important;
+        line-height: 1.5 !important;
+        margin: 4px 0 !important;
+    }
+
+    .doctor-card button {
+        margin-top: 10px !important;
+        width: auto !important;
+        max-width: 100% !important;
+    }
+}
