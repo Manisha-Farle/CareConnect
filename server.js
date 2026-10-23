@@ -3,7 +3,13 @@ const mysql = require("mysql2");
 const path = require("path");
 
 const app = express();
-const PORT = 3000;
+
+// Railway provides PORT automatically
+const PORT = process.env.PORT || 3000;
+
+// =========================
+// MIDDLEWARE
+// =========================
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -13,6 +19,10 @@ const mainFolder = path.join(__dirname, "..");
 
 // Serve all website files
 app.use(express.static(mainFolder));
+
+// =========================
+// HTML PAGES
+// =========================
 
 // Home page
 app.get("/", (req, res) => {
@@ -34,38 +44,83 @@ app.get("/admin.html", (req, res) => {
     res.sendFile(path.join(mainFolder, "admin.html"));
 });
 
-
 // =========================
 // MYSQL CONNECTION
 // =========================
-
+console.log("DB_HOST:", process.env.DB_HOST);
 const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "careconnect"
+    host: process.env.DB_HOST || process.env.MYSQLHOST || "localhost",
+    user: process.env.DB_USER || process.env.MYSQLUSER || "root",
+    password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || "",
+    database: process.env.DB_NAME || process.env.MYSQLDATABASE || "careconnect",
+    port: process.env.DB_PORT || process.env.MYSQLPORT || 3306
 });
 
 db.connect((err) => {
     if (err) {
-        console.log("MySQL connection failed:", err.message);
+        console.log("MySQL connection failed:", err);
         return;
     }
 
     console.log("MySQL connected successfully!");
+
+    const createUsersTable = `
+        CREATE TABLE IF NOT EXISTS users (
+            id INT NOT NULL AUTO_INCREMENT,
+            name VARCHAR(100) NOT NULL,
+            email VARCHAR(100) NOT NULL UNIQUE,
+            phone VARCHAR(15),
+            password VARCHAR(255) NOT NULL,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id)
+        )
+    `;
+
+    const createAppointmentsTable = `
+        CREATE TABLE IF NOT EXISTS appointments (
+            id INT NOT NULL AUTO_INCREMENT,
+            patient_name VARCHAR(100) NOT NULL,
+            patient_age INT,
+            phone VARCHAR(15),
+            email VARCHAR(100),
+            doctor VARCHAR(100),
+            appointment_date DATE,
+            appointment_time TIME,
+            health_problem TEXT,
+            status VARCHAR(30) DEFAULT 'Pending',
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id)
+        )
+    `;
+
+    db.query(createUsersTable, (err) => {
+        if (err) {
+            console.log("Users table creation failed:", err);
+            return;
+        }
+
+        console.log("Users table ready!");
+
+        db.query(createAppointmentsTable, (err) => {
+            if (err) {
+                console.log("Appointments table creation failed:", err);
+                return;
+            }
+
+            console.log("Appointments table ready!");
+        });
+    });
 });
-
-
 // =========================
 // TEST API
 // =========================
 
 app.get("/api/test", (req, res) => {
     res.json({
+        success: true,
         message: "CareConnect server is working!"
     });
 });
-
 
 // =========================
 // REGISTER USER
@@ -87,7 +142,7 @@ app.post("/api/register", (req, res) => {
         (err, result) => {
 
             if (err) {
-                console.log(err);
+                console.log("Registration Error:", err);
 
                 return res.status(500).json({
                     success: false,
@@ -103,7 +158,6 @@ app.post("/api/register", (req, res) => {
     );
 });
 
-
 // =========================
 // LOGIN USER
 // =========================
@@ -113,7 +167,8 @@ app.post("/api/login", (req, res) => {
     const { email, password } = req.body;
 
     const sql = `
-        SELECT * FROM users
+        SELECT *
+        FROM users
         WHERE email = ? AND password = ?
     `;
 
@@ -123,7 +178,7 @@ app.post("/api/login", (req, res) => {
         (err, results) => {
 
             if (err) {
-                console.log(err);
+                console.log("Login Error:", err);
 
                 return res.status(500).json({
                     success: false,
@@ -147,19 +202,23 @@ app.post("/api/login", (req, res) => {
     );
 });
 
+// =========================
 // GET MY APPOINTMENTS
+// =========================
+
 app.get("/api/my-appointments", (req, res) => {
 
     const sql = `
         SELECT *
         FROM appointments
-        ORDER BY appointment_date DESC, appointment_time DESC
+        ORDER BY appointment_date DESC,
+                 appointment_time DESC
     `;
 
     db.query(sql, (err, results) => {
 
         if (err) {
-            console.log(err);
+            console.log("Appointment Load Error:", err);
 
             return res.status(500).json({
                 success: false,
@@ -173,6 +232,7 @@ app.get("/api/my-appointments", (req, res) => {
         });
     });
 });
+
 // =========================
 // BOOK APPOINTMENT
 // =========================
@@ -220,7 +280,7 @@ app.post("/api/appointments", (req, res) => {
         (err, result) => {
 
             if (err) {
-                console.log(err);
+                console.log("Appointment Error:", err);
 
                 return res.status(500).json({
                     success: false,
@@ -235,7 +295,11 @@ app.post("/api/appointments", (req, res) => {
         }
     );
 });
+
+// =========================
 // GET ALL REGISTERED USERS
+// =========================
+
 app.get("/api/admin/users", (req, res) => {
 
     const sql = `
@@ -247,7 +311,7 @@ app.get("/api/admin/users", (req, res) => {
     db.query(sql, (err, results) => {
 
         if (err) {
-            console.log(err);
+            console.log("Users Load Error:", err);
 
             return res.status(500).json({
                 success: false,
@@ -261,79 +325,102 @@ app.get("/api/admin/users", (req, res) => {
         });
     });
 });
-// DELETE APPOINTMENT
+
+// =========================
+// DELETE APPOINTMENT - ADMIN
+// =========================
+
 app.delete("/api/admin/appointments/:id", (req, res) => {
 
     const appointmentId = req.params.id;
 
-    const sql = "DELETE FROM appointments WHERE id = ?";
+    const sql = `
+        DELETE FROM appointments
+        WHERE id = ?
+    `;
 
-    db.query(sql, [appointmentId], (err, result) => {
+    db.query(
+        sql,
+        [appointmentId],
+        (err, result) => {
 
-        if (err) {
-            console.log("Delete Error:", err);
+            if (err) {
+                console.log("Delete Error:", err);
 
-            return res.status(500).json({
-                success: false,
-                message: "Failed to delete appointment"
+                return res.status(500).json({
+                    success: false,
+                    message: "Failed to delete appointment"
+                });
+            }
+
+            if (result.affectedRows === 0) {
+
+                return res.json({
+                    success: false,
+                    message: "Appointment not found"
+                });
+            }
+
+            res.json({
+                success: true,
+                message: "Appointment deleted successfully!"
             });
         }
-
-        if (result.affectedRows === 0) {
-            return res.json({
-                success: false,
-                message: "Appointment not found"
-            });
-        }
-
-        res.json({
-            success: true,
-            message: "Appointment deleted successfully!"
-        });
-
-    });
-
+    );
 });
 
+// =========================
 // CANCEL APPOINTMENT
+// =========================
+
 app.delete("/api/appointments/:id", (req, res) => {
 
     const appointmentId = req.params.id;
 
-    const sql = "DELETE FROM appointments WHERE id = ?";
+    const sql = `
+        DELETE FROM appointments
+        WHERE id = ?
+    `;
 
-    db.query(sql, [appointmentId], (err, result) => {
+    db.query(
+        sql,
+        [appointmentId],
+        (err, result) => {
 
-        if (err) {
-            console.log("Cancel Error:", err);
+            if (err) {
+                console.log("Cancel Error:", err);
 
-            return res.status(500).json({
-                success: false,
-                message: "Failed to cancel appointment"
+                return res.status(500).json({
+                    success: false,
+                    message: "Failed to cancel appointment"
+                });
+            }
+
+            if (result.affectedRows === 0) {
+
+                return res.json({
+                    success: false,
+                    message: "Appointment not found"
+                });
+            }
+
+            res.json({
+                success: true,
+                message: "Appointment cancelled successfully!"
             });
         }
-
-        if (result.affectedRows === 0) {
-            return res.json({
-                success: false,
-                message: "Appointment not found"
-            });
-        }
-
-        res.json({
-            success: true,
-            message: "Appointment cancelled successfully!"
-        });
-
-    });
-
+    );
 });
+
 // =========================
 // START SERVER
 // =========================
 
 app.listen(PORT, "0.0.0.0", () => {
+    
+
     console.log(
-        `CareConnect server running at http://localhost:${PORT}`
+        `CareConnect server running on port ${PORT}`
     );
+
 });
