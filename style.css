@@ -3957,3 +3957,12 @@ nav a{
     }
 }
 
+/* Navbar position fix */
+.navbar {
+    margin-top: 0 !important;
+    top: 0;
+    position: relative;
+    transform: translateY(-10px);
+}
+
+
