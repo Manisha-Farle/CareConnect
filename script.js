@@ -110,167 +110,126 @@ if (loginForm) {
 }
 
 
-// ===============================
-// BOOK APPOINTMENT
-// ===============================
 
-const appointmentForm =
-    document.getElementById("appointmentForm");
+/* ===============================
+   BOOK APPOINTMENT
+================================ */
+
+const appointmentForm = document.getElementById("appointmentForm");
 
 if (appointmentForm) {
-
     appointmentForm.addEventListener("submit", async function (e) {
-
         e.preventDefault();
 
         const formData = new FormData(appointmentForm);
 
         const data = {
-
-            patient_name:
-                formData.get("patient_name"),
-
-            patient_age:
-                formData.get("patient_age"),
-
-            phone:
-                formData.get("phone"),
-
-            email:
-                formData.get("email"),
-
-            doctor:
-                formData.get("doctor"),
-
-            appointment_date:
-                formData.get("appointment_date"),
-
-            appointment_time:
-                formData.get("appointment_time"),
-
-            health_problem:
-                formData.get("health_problem")
+            patient_name: formData.get("patient_name"),
+            patient_age: formData.get("patient_age"),
+            phone: formData.get("phone"),
+            email: formData.get("email"),
+            doctor: formData.get("doctor"),
+            appointment_date: formData.get("appointment_date"),
+            appointment_time: formData.get("appointment_time"),
+            health_problem: formData.get("health_problem")
         };
 
-
         try {
-
             const response = await fetch("/api/appointments", {
-
                 method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
-
             });
-
 
             const result = await response.json();
 
-
-            alert(result.message);
-
-
-            if (result.success) {
-
-                appointmentForm.reset();
-
+            if (!response.ok) {
+                alert(result.message || "Appointment booking failed.");
+                return;
             }
 
+            alert(result.message || "Appointment request submitted.");
+
+            if (result.success) {
+                appointmentForm.reset();
+            }
         } catch (error) {
-
-            console.error(error);
-
-            alert("Server connection failed.");
-
+            console.error("Appointment booking error:", error);
+            alert("Server connection failed. Please try again.");
         }
-
     });
+}
 
-    async function cancelAppointment(id) {
-
-    const confirmCancel = confirm(
-        "Are you sure you want to cancel this appointment?"
-    );
-
-    if (!confirmCancel) {
+/* CANCEL APPOINTMENT */
+async function cancelAppointment(id) {
+    if (!confirm("Are you sure you want to cancel this appointment?")) {
         return;
     }
 
     try {
-
-        const response = await fetch(
-            "/api/appointments/" + id,
-            {
-                method: "DELETE"
-            }
-        );
+        const response = await fetch("/api/appointments/" + id, {
+            method: "DELETE"
+        });
 
         const result = await response.json();
+        alert(result.message || "Request completed.");
 
-        alert(result.message);
-
-        if (result.success) {
+        if (result.success && typeof loadAppointments === "function") {
             loadAppointments();
         }
-
     } catch (error) {
-
         console.error(error);
-
         alert("Unable to cancel appointment.");
-
     }
 }
-    ///Find Healthcare///
 
-    function findHealthcare() {
-
-    if (navigator.geolocation) {
-
-        navigator.geolocation.getCurrentPosition(
-            function(position) {
-
-                const latitude = position.coords.latitude;
-                const longitude = position.coords.longitude;
-
-                const mapURL =
-                    "https://www.google.com/maps/search/hospitals/@" +
-                    latitude + "," +
-                    longitude + ",14z";
-
-                window.open(mapURL, "_blank");
-            },
-
-            function() {
-                alert("Please allow location permission.");
-            }
-        );
-
-    } else {
+/* FIND HEALTHCARE */
+function findHealthcare() {
+    if (!navigator.geolocation) {
         alert("Location is not supported by this browser.");
+        return;
     }
-}
-function searchHealthcare() {
-    const location = document.getElementById("location").value;
-    const type = document.getElementById("healthcareType").value;
 
-    if (location === "") {
+    navigator.geolocation.getCurrentPosition(
+        function (position) {
+            const { latitude, longitude } = position.coords;
+            const mapURL =
+                "https://www.google.com/maps/search/hospitals/@" +
+                latitude + "," + longitude + ",14z";
+
+            window.open(mapURL, "_blank");
+        },
+        function () {
+            alert("Please allow location permission.");
+        }
+    );
+}
+
+/* SEARCH HEALTHCARE */
+function searchHealthcare() {
+    const locationInput = document.getElementById("location");
+    const typeInput = document.getElementById("healthcareType");
+
+    if (!locationInput || !typeInput) {
+        alert("Healthcare search form not found.");
+        return;
+    }
+
+    const location = locationInput.value.trim();
+    const type = typeInput.value;
+
+    if (!location) {
         alert("Please enter your location.");
         return;
     }
 
     const mapURL =
         "https://www.google.com/maps/search/" +
-        type + "+near+" +
-        encodeURIComponent(location);
+        encodeURIComponent(type + " near " + location);
 
     window.open(mapURL, "_blank");
 }
-}
+
 // ===============================
 // BOOK FROM DOCTOR CARD
 // ===============================
@@ -316,57 +275,32 @@ function searchDoctors() {
     });
 }
 
-const menuToggle = document.getElementById("menuToggle");
-const navbar = document.querySelector(".navbar");
-const navLinks = document.querySelector(".nav-links");
 
-if (menuToggle && navbar && navLinks) {
-    menuToggle.addEventListener("click", () => {
-        const isOpen = navLinks.classList.toggle("active");
 
-        navbar.classList.toggle("menu-open", isOpen);
-        menuToggle.textContent = isOpen ? "✕" : "☰";
-        menuToggle.setAttribute("aria-expanded", isOpen);
-        menuToggle.setAttribute(
-            "aria-label",
-            isOpen ? "Close navigation menu" : "Open navigation menu"
-        );
-    });
+function toggleMenu() {
+    const navLinks = document.querySelector(".nav-links");
+    const menuButton = document.querySelector(".menu-toggle");
 
-    navLinks.querySelectorAll("a").forEach(link => {
-        link.addEventListener("click", () => {
-            navLinks.classList.remove("active");
-            navbar.classList.remove("menu-open");
-            menuToggle.textContent = "☰";
-            menuToggle.setAttribute("aria-expanded", "false");
-        });
-    });
+    if (!navLinks || !menuButton) return;
+
+    navLinks.classList.toggle("active");
+
+    const isOpen = navLinks.classList.contains("active");
+
+    menuButton.textContent = isOpen ? "✕" : "☰";
+    menuButton.setAttribute("aria-expanded", isOpen);
 }
 
-const menuToggle = document.getElementById("menuToggle");
-const navbar = document.querySelector(".navbar");
-const navLinks = document.querySelector(".nav-links");
+document.querySelectorAll(".nav-links a").forEach(function(link) {
+    link.addEventListener("click", function() {
+        const navLinks = document.querySelector(".nav-links");
+        const menuButton = document.querySelector(".menu-toggle");
 
-if (menuToggle && navbar && navLinks) {
-    menuToggle.addEventListener("click", () => {
-        const isOpen = navLinks.classList.toggle("active");
-
-        navbar.classList.toggle("menu-open", isOpen);
-        menuToggle.textContent = isOpen ? "✕" : "☰";
-        menuToggle.setAttribute("aria-expanded", isOpen);
-        menuToggle.setAttribute(
-            "aria-label",
-            isOpen ? "Close navigation menu" : "Open navigation menu"
-        );
+        if (navLinks) navLinks.classList.remove("active");
+        if (menuButton) {
+            menuButton.textContent = "☰";
+            menuButton.setAttribute("aria-expanded", "false");
+        }
     });
-
-    navLinks.querySelectorAll("a").forEach(link => {
-        link.addEventListener("click", () => {
-            navLinks.classList.remove("active");
-            navbar.classList.remove("menu-open");
-            menuToggle.textContent = "☰";
-            menuToggle.setAttribute("aria-expanded", "false");
-        });
-    });
-}
+});
 

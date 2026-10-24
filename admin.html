@@ -2,323 +2,325 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>CareConnect - Dashboard</title>
+    <title>Admin Dashboard - CareConnect</title>
 
     <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
 
+    <!-- NAVBAR -->
+    <nav class="navbar">
 
-    <!-- =========================
-         NAVBAR
-    ========================== -->
+        <div class="logo">
+            CareConnect Admin
+        </div>
 
-    <header>
+        <div class="nav-links">
+            <a href="dashboard.html">User Dashboard</a>
+            <a href="index.html">Website</a>
+            <a href="#" onclick="adminLogout()">Logout</a>
+        </div>
 
-        <nav class="navbar">
-
-            <div class="logo">
-                CareConnect
-            </div>
-
-            <ul class="nav-links">
-
-                <li>
-                    <a href="index.html">
-                        Home
-                    </a>
-                </li>
-
-                <li>
-                    <a href="index.html#doctors">
-                        Doctors
-                    </a>
-                </li>
-
-                <li>
-                    <a href="index.html#services">
-                        Services
-                    </a>
-                </li>
-
-            </ul>
-
-            <button class="login-btn"
-                    onclick="logout()">
-
-                Logout
-
-            </button>
-
-        </nav>
-
-    </header>
+    </nav>
 
 
+    <!-- ADMIN DASHBOARD -->
 
-    <!-- =========================
-         DASHBOARD
-    ========================== -->
+    <section class="admin-dashboard">
 
-    <section class="dashboard">
+        <h1>Admin Dashboard</h1>
 
-        <h1>
-            Welcome to CareConnect
-        </h1>
-
-        <p class="dashboard-text">
-            Helping Communities Access Online Healthcare Services
+        <p class="admin-subtitle">
+            Manage CareConnect Healthcare Services
         </p>
 
 
-        <div class="dashboard-container">
+        <!-- STATISTICS -->
 
+        <div class="admin-stats">
 
-            <!-- =========================
-                 FIND HEALTHCARE
-            ========================== -->
+            <div class="admin-stat-card">
 
-            <div class="dashboard-card">
+                <h2 id="totalUsers">0</h2>
 
-                <div class="dashboard-icon">
-                    🩺
-                </div>
-
-                <h2>
-                    Find Healthcare
-                </h2>
-
-                <p>
-                    Find healthcare services and doctors
-                    according to your needs.
-                </p>
-
-                <a href="index.html#doctors"
-                   class="dashboard-btn">
-
-                    Find Doctor
-
-                </a>
-
-                <button class="dashboard-btn"
-                        onclick="findHealthcare()">
-
-                    📍 Find Location
-
-                </button>
+                <p>Registered Users</p>
 
             </div>
 
 
+            <div class="admin-stat-card">
 
-            <!-- =========================
-                 OUR DOCTORS
-            ========================== -->
+                <h2 id="totalAppointments">0</h2>
 
-            <div class="dashboard-card">
-
-                <div class="dashboard-icon">
-                    👨‍⚕️
-                </div>
-
-                <h2>
-                    Our Doctors
-                </h2>
-
-                <p>
-                    View available doctors and
-                    their specializations.
-                </p>
-
-                <a href="index.html#doctors"
-                   class="dashboard-btn">
-
-                    View Doctors
-
-                </a>
+                <p>Total Appointments</p>
 
             </div>
 
 
+            <div class="admin-stat-card">
 
-            <!-- =========================
-                 BOOK APPOINTMENT
-            ========================== -->
+                <h2 id="totalDoctors">3</h2>
 
-            <div class="dashboard-card">
-
-                <div class="dashboard-icon">
-                    📅
-                </div>
-
-                <h2>
-                    Book Appointment
-                </h2>
-
-                <p>
-                    Book an appointment with a
-                    healthcare professional.
-                </p>
-
-                <a href="index.html#appointment"
-                   class="dashboard-btn">
-
-                    Book Now
-
-                </a>
+                <p>Doctors</p>
 
             </div>
 
+        </div>
 
 
-            <!-- =========================
-                 MY APPOINTMENTS
-            ========================== -->
+        <!-- APPOINTMENTS -->
 
-            <div class="dashboard-card">
+        <div class="admin-section">
 
-                <div class="dashboard-icon">
-                    📋
-                </div>
+            <h2>All Appointments</h2>
 
-                <h2>
-                    My Appointments
-                </h2>
+            <div id="adminAppointments">
 
-                <p>
-                    View your booked healthcare
-                    appointments.
-                </p>
-
-                <a href="my-appointments.html"
-                   class="dashboard-btn">
-
-                    View Appointments
-
-                </a>
+                <p>Loading appointments...</p>
 
             </div>
 
+        </div>
+
+
+        <!-- USERS -->
+
+        <div class="admin-section">
+
+            <h2>Registered Users</h2>
+
+            <div id="adminUsers">
+
+                <p>Loading users...</p>
+
+            </div>
 
         </div>
 
     </section>
 
 
-
-    <!-- =========================
-         FOOTER
-    ========================== -->
+    <!-- FOOTER -->
 
     <footer>
 
-        <h2>
-            CareConnect
-        </h2>
-
         <p>
+            © 2026 CareConnect |
             Helping Communities Access Online Healthcare Services
-        </p>
-
-        <p>
-            © 2026 CareConnect. All Rights Reserved.
         </p>
 
     </footer>
 
 
-
-    <!-- =========================
-         LOCATION JAVASCRIPT
-    ========================== -->
+    <!-- JAVASCRIPT -->
 
     <script>
 
-        function findHealthcare() {
+        // =========================
+        // DELETE APPOINTMENT
+        // =========================
 
-            if (navigator.geolocation) {
+        async function deleteAppointment(id) {
 
-                navigator.geolocation.getCurrentPosition(
+            const confirmDelete =
+                confirm("Are you sure you want to delete this appointment?");
 
-                    function(position) {
+            if (!confirmDelete) {
+                return;
+            }
 
-                        const latitude =
-                            position.coords.latitude;
+            try {
 
-                        const longitude =
-                            position.coords.longitude;
-
-
-                        const mapURL =
-                            "https://www.google.com/maps/search/hospitals/@"
-                            + latitude
-                            + ","
-                            + longitude
-                            + ",14z";
-
-
-                        window.open(
-                            mapURL,
-                            "_blank"
-                        );
-
-                    },
-
-                    function() {
-
-                        alert(
-                            "Please allow location permission."
-                        );
-
+                const response = await fetch(
+                    `/api/admin/appointments/${id}`,
+                    {
+                        method: "DELETE"
                     }
-
                 );
 
-            } else {
+                const result = await response.json();
 
-                alert(
-                    "Location is not supported by this browser."
-                );
+                alert(result.message);
+
+                if (result.success) {
+                    loadAdminData();
+                }
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert("Unable to delete appointment.");
+
+            }
+        }
+
+
+        // =========================
+        // LOAD ADMIN DATA
+        // =========================
+
+        async function loadAdminData() {
+
+            try {
+
+                // =========================
+                // LOAD USERS
+                // =========================
+
+                const usersResponse =
+                    await fetch("/api/admin/users");
+
+                const usersResult =
+                    await usersResponse.json();
+
+
+                if (usersResult.success) {
+
+                    document.getElementById("totalUsers").innerText =
+                        usersResult.users.length;
+
+                    const usersContainer =
+                        document.getElementById("adminUsers");
+
+                    usersContainer.innerHTML = "";
+
+
+                    usersResult.users.forEach(function(user) {
+
+                        usersContainer.innerHTML += `
+
+                            <div class="admin-card">
+
+                                <h3>
+                                    ${user.name}
+                                </h3>
+
+                                <p>
+                                    Email: ${user.email}
+                                </p>
+
+                                <p>
+                                    Phone: ${user.phone}
+                                </p>
+
+                            </div>
+
+                        `;
+
+                    });
+
+                }
+
+
+                // =========================
+                // LOAD APPOINTMENTS
+                // =========================
+
+                const appointmentResponse =
+                    await fetch("/api/my-appointments");
+
+                const appointmentResult =
+                    await appointmentResponse.json();
+
+
+                if (appointmentResult.success) {
+
+                    document.getElementById("totalAppointments").innerText =
+                        appointmentResult.appointments.length;
+
+
+                    const appointmentContainer =
+                        document.getElementById("adminAppointments");
+
+                    appointmentContainer.innerHTML = "";
+
+
+                    appointmentResult.appointments.forEach(function(appointment) {
+
+                        appointmentContainer.innerHTML += `
+
+                            <div class="admin-card">
+
+                                <h3>
+                                    ${appointment.patient_name}
+                                </h3>
+
+                                <p>
+                                    Doctor: ${appointment.doctor}
+                                </p>
+
+                                <p>
+                                    Date: ${appointment.appointment_date}
+                                </p>
+
+                                <p>
+                                    Time: ${appointment.appointment_time}
+                                </p>
+
+                                <p>
+                                    Health Problem:
+                                    ${appointment.health_problem}
+                                </p>
+
+                                <button
+                                    onclick="deleteAppointment(${appointment.id})"
+                                    class="delete-btn">
+                                    Delete Appointment
+                                </button>
+
+                            </div>
+
+                        `;
+
+                    });
+
+                }
+
+            }
+
+            catch (error) {
+
+                console.error(error);
 
             }
 
         }
 
 
+        // Load data when page opens
+        loadAdminData();
+
 
         // =========================
-        // LOGOUT
+        // ADMIN LOGOUT
         // =========================
 
-        function logout() {
+        function adminLogout() {
 
-            localStorage.removeItem("loggedIn");
+            localStorage.removeItem("adminLoggedIn");
 
-            alert(
-                "You have been logged out."
-            );
+            window.location.href = "admin-login.html";
 
-            window.location.href =
-                "login.html";
+        }
+
+
+        // =========================
+        // ADMIN SECURITY
+        // =========================
+
+        if (localStorage.getItem("adminLoggedIn") !== "true") {
+
+            window.location.href = "admin-login.html";
 
         }
 
     </script>
-
-
-
-    <!-- MAIN SCRIPT -->
-
-    <script src="script.js"></script>
-
+<script src="script.js"></script>
 
 </body>
 
