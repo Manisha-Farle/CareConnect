@@ -315,54 +315,7 @@ function searchDoctors() {
         }
     });
 }
-.menu-toggle {
-    display: none;
-    background: transparent;
-    border: none;
-    font-size: 28px;
-    cursor: pointer;
-    color: inherit;
-}
 
-@media (max-width: 768px) {
-    .navbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        position: relative;
-    }
-
-    .menu-toggle {
-        display: block;
-    }
-
-    .nav-links {
-        display: none;
-        flex-direction: column;
-        width: 100%;
-        gap: 15px;
-        padding: 15px 0;
-        margin: 0;
-    }
-
-    .nav-links.active {
-        display: flex;
-    }
-
-    .nav-links li {
-        list-style: none;
-    }
-
-    .login-btn {
-        display: none;
-    }
-
-    .navbar.menu-open .login-btn {
-        display: inline-block;
-        margin-bottom: 10px;
-    }
-}
 const menuToggle = document.getElementById("menuToggle");
 const navbar = document.querySelector(".navbar");
 const navLinks = document.querySelector(".nav-links");
@@ -389,3 +342,31 @@ if (menuToggle && navbar && navLinks) {
         });
     });
 }
+
+const menuToggle = document.getElementById("menuToggle");
+const navbar = document.querySelector(".navbar");
+const navLinks = document.querySelector(".nav-links");
+
+if (menuToggle && navbar && navLinks) {
+    menuToggle.addEventListener("click", () => {
+        const isOpen = navLinks.classList.toggle("active");
+
+        navbar.classList.toggle("menu-open", isOpen);
+        menuToggle.textContent = isOpen ? "✕" : "☰";
+        menuToggle.setAttribute("aria-expanded", isOpen);
+        menuToggle.setAttribute(
+            "aria-label",
+            isOpen ? "Close navigation menu" : "Open navigation menu"
+        );
+    });
+
+    navLinks.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", () => {
+            navLinks.classList.remove("active");
+            navbar.classList.remove("menu-open");
+            menuToggle.textContent = "☰";
+            menuToggle.setAttribute("aria-expanded", "false");
+        });
+    });
+}
+
