@@ -363,3 +363,29 @@ function searchDoctors() {
         margin-bottom: 10px;
     }
 }
+const menuToggle = document.getElementById("menuToggle");
+const navbar = document.querySelector(".navbar");
+const navLinks = document.querySelector(".nav-links");
+
+if (menuToggle && navbar && navLinks) {
+    menuToggle.addEventListener("click", () => {
+        const isOpen = navLinks.classList.toggle("active");
+
+        navbar.classList.toggle("menu-open", isOpen);
+        menuToggle.textContent = isOpen ? "✕" : "☰";
+        menuToggle.setAttribute("aria-expanded", isOpen);
+        menuToggle.setAttribute(
+            "aria-label",
+            isOpen ? "Close navigation menu" : "Open navigation menu"
+        );
+    });
+
+    navLinks.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", () => {
+            navLinks.classList.remove("active");
+            navbar.classList.remove("menu-open");
+            menuToggle.textContent = "☰";
+            menuToggle.setAttribute("aria-expanded", "false");
+        });
+    });
+}
