@@ -3217,3 +3217,51 @@ nav a{
     
     transition: 0.3s ease;
 }
+
+/* CARECONNECT MOBILE HAMBURGER MENU */
+
+.menu-toggle {
+    display: none;
+    background: transparent;
+    border: none;
+    color: #087ea4;
+    font-size: 28px;
+    cursor: pointer;
+    width: auto;
+    padding: 5px 10px;
+}
+
+@media (max-width: 900px) {
+    .navbar {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .navbar .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;
+        padding: 15px 0;
+    }
+
+    .navbar .nav-links.active {
+        display: flex;
+    }
+
+    .navbar .login-btn {
+        display: none;
+    }
+
+    .navbar.menu-open .login-btn {
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+}
